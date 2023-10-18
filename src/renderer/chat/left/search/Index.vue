@@ -1,9 +1,23 @@
 <script lang="ts" setup>
-import {ref} from "vue";
+import {reactive, ref} from "vue";
 import Avatar from '../../../components/avatar/Index.vue'
 import {UserOutlined} from "@ant-design/icons-vue";
 
+let searchUser = ref(null)
+let searchKey = ref('846179345@qq.com')
 let open = ref(false)
+import userApi from "../../../api/methods/user.ts";
+
+const search = () => {
+  console.log(searchKey.value)
+  userApi.searchOneByEmail({email: searchKey.value})
+      .then(response => {
+        if (response.data.code === '200') {
+          searchUser.value = response.data.data
+          console.log(searchUser.value)
+        }
+      })
+}
 </script>
 <template>
   <div class="chatSearch">
@@ -19,17 +33,17 @@ let open = ref(false)
     <a-modal v-model:open="open" title="添加好友" ok-text="确认" cancel-text="取消">
       <div style="display: flex; width: 100%;height: 300px; flex-direction: column">
         <div style="display: flex; height: 30px">
-          <input placeholder="输入邮箱" style="flex: 1;border-radius: 5px"/>
-          <div style="padding: 4px;margin-left: 4px">搜索</div>
+          <input placeholder="输入邮箱" style="flex: 1;border-radius: 5px" v-model="searchKey"/>
+          <div style="padding: 4px;margin-left: 4px; cursor: pointer" @click="search">搜索</div>
         </div>
         <div class="friendList">
-          <div v-for="i in 20" class="friendItem">
+          <div v-if="searchUser != null" class="friendItem">
             <a-avatar shape="square" :size="40">
               <template #icon>
                 <UserOutlined/>
               </template>
             </a-avatar>
-            <span style="padding: 10px;display: block; flex: 1">获取验证码</span>
+            <span style="padding: 10px;display: block; flex: 1">{{ searchUser.userName }}</span>
             <span class="addBtn">+</span>
           </div>
         </div>
@@ -43,7 +57,7 @@ let open = ref(false)
   display: block
 }
 
-.addBtn:hover{
+.addBtn:hover {
   color: rgb(87, 148, 247);
 }
 
