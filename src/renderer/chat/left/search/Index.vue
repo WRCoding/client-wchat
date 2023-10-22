@@ -2,22 +2,34 @@
 import {reactive, ref} from "vue";
 import Avatar from '../../../components/avatar/Index.vue'
 import {UserOutlined} from "@ant-design/icons-vue";
+import user from "../../../api/methods/user.ts";
+import {useUserInfoStore} from "../../../store/useUserInfoStore.ts";
+import FriendVo from "../../../model/FriendVo.ts";
 
-let searchUser = ref(null)
+let searchUser = ref(new FriendVo())
 let searchKey = ref('846179345@qq.com')
 let open = ref(false)
-import userApi from "../../../api/methods/user.ts";
+let userInfoStore = useUserInfoStore().userInfo
 
 const search = () => {
   console.log(searchKey.value)
-  userApi.searchOneByEmail({email: searchKey.value})
+  user.searchFriend({userId: userInfoStore.id, searchKey: searchKey.value})
       .then(response => {
         if (response.data.code === '200') {
-          searchUser.value = response.data.data
+          searchUser.value = response.data.data as FriendVo
           console.log(searchUser.value)
         }
       })
 }
+
+const addFriend = () => {
+  console.log(searchUser.value)
+  user.addFriend({userId: userInfoStore.id, friendId: searchUser.value.id})
+      .then(response => {
+        console.log(response)
+      })
+}
+
 </script>
 <template>
   <div class="chatSearch">
@@ -38,13 +50,11 @@ const search = () => {
         </div>
         <div class="friendList">
           <div v-if="searchUser != null" class="friendItem">
-            <a-avatar shape="square" :size="40">
-              <template #icon>
-                <UserOutlined/>
-              </template>
-            </a-avatar>
+            <avatar :src="searchUser.avatarUrl" :size=40 />
             <span style="padding: 10px;display: block; flex: 1">{{ searchUser.userName }}</span>
-            <span class="addBtn">+</span>
+            <span v-if="userInfoStore.id !== searchUser.id && searchUser.isFriend === 0"
+                  class="addBtn" @click="addFriend">+</span>
+            <span v-else style="padding: 10px;display: block">好友</span>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 class UserInfoVo {
+    id: string;
     userName: string
     email: string
     phone?: string

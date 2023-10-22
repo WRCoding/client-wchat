@@ -8,12 +8,12 @@ import Ws from "../../ts/WebSocket.ts";
 
 let mainWindowRoutes = ref([
   {path: `/Chat`, isSelected: true, icon: `icon-chat`, iconSelected: `icon-chat`},
-  {path: `/Chat`, isSelected: false, icon: `icon-tongxunlu1`, iconSelected: `icon-tongxunlu`},
+  {path: `/Contacts`, isSelected: false, icon: `icon-tongxunlu1`, iconSelected: `icon-tongxunlu`},
   // {path: `/WindowMain/Collection`, isSelected: false, icon: `icon-shoucang1`, iconSelected: `icon-shoucang`},
 ]);
 let route = useRoute();
 let router = useRouter();
-let userInfo = useUserInfoStore()
+let userInfoStore = useUserInfoStore()
 watch(
     () => route,
     () => mainWindowRoutes.value.forEach((v) => (v.isSelected = v.path === route.fullPath)),
@@ -25,7 +25,7 @@ watch(
 
 const logout = () => {
   message.success('退出登录')
-  userInfo.setUserInfo(null)
+  userInfoStore.setUserInfo(null)
   Ws.close()
   router.push('/')
 }
@@ -39,7 +39,7 @@ let src = ref('../../../../src/assets/vue.svg')
 </script>
 <template>
   <div class="BarLeft">
-    <avatar :src="src" :size=70 style="padding-top: 36px"/>
+    <avatar :src="userInfoStore.userInfo.avatarUrl" :size= 55 />
     <div class="menu">
       <!--      <router-link v-for="item in mainWindowRoutes" :to="item.path"-->
       <!--                   :class="[`menuItem`, { selected: item.isSelected }]">-->
@@ -61,10 +61,11 @@ let src = ref('../../../../src/assets/vue.svg')
 .BarLeft {
   width: 70px;
   height: 100%;
+  padding-top: 40px;
   display: flex;
   flex-direction: column;
   background: rgb(46, 46, 46);
-  align-content: center;
+  align-items: center;
 }
 
 

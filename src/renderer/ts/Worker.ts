@@ -37,11 +37,12 @@ const initConnection = (ipAndPort: string) => {
 }
 
 function closeConnection() {
+    connection.close()
     connection.removeEventListener('message', handleMsg)
     connection.removeEventListener('open', handleOpen)
     connection.removeEventListener('close', handleClose)
     connection.removeEventListener('error', handleError)
-    connection.close()
+    connection = null
 }
 
 self.onmessage = (e: MessageEvent<string>) => {

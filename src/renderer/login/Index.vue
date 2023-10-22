@@ -3,6 +3,7 @@ import {onMounted, ref} from "vue";
 import {UserOutlined} from '@ant-design/icons-vue';
 import {useRouter} from "vue-router";
 import oauth from "../api/methods/oauth.ts";
+import user from "../api/methods/user.ts";
 import {useUserInfoStore} from "../store/useUserInfoStore.ts";
 import {message} from 'ant-design-vue';
 import Ws from "../ts/WebSocket.ts";
@@ -11,9 +12,26 @@ import {webContents, ipcRenderer, BrowserWindow} from "electron";
 
 onMounted(() => {
   console.log('login/Index.vue')
-  ipcRenderer.on('loginSuccessByGitHub', (event,data) => {
-    console.log(data)
-  })
+
+})
+
+ipcRenderer.on('loginSuccessByGitHub', (event, url, param) => {
+  console.log(url + ',' + param)
+  oauth.callback({code: param})
+      .then(response => {
+        console.log(response)
+        if (response.data.code === '200') {
+          message.success('登录成功')
+          let userInfo = response.data.data as UserInfoVo
+          console.log(userInfo)
+          userInfoStore.setUserInfo(userInfo)
+          new Ws(userInfo.ipAndPort)
+          clearInput()
+          router.push('/Chat')
+        } else {
+          message.warning('GitHub登录失败')
+        }
+      })
 })
 
 const userInfoStore = useUserInfoStore()
@@ -35,7 +53,6 @@ function clearInput() {
   passWord.value = ''
   checkCode.value = ''
 }
-
 
 
 const loginByGitHub = () => {
