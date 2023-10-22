@@ -6,9 +6,14 @@ import oauth from "../api/methods/oauth.ts";
 import {useUserInfoStore} from "../store/useUserInfoStore.ts";
 import {message} from 'ant-design-vue';
 import Ws from "../ts/WebSocket.ts";
+import {webContents, ipcRenderer, BrowserWindow} from "electron";
+
 
 onMounted(() => {
   console.log('login/Index.vue')
+  ipcRenderer.on('loginSuccessByGitHub', (event,data) => {
+    console.log(data)
+  })
 })
 
 const userInfoStore = useUserInfoStore()
@@ -30,6 +35,12 @@ function clearInput() {
   passWord.value = ''
   checkCode.value = ''
 }
+
+
+
+const loginByGitHub = () => {
+  ipcRenderer.send('openWindow')
+};
 
 function registerOrLogin() {
   if (isLogin.value) {
@@ -95,7 +106,8 @@ function registerOrLogin() {
             isLogin ? '登录' : '注册'
           }}</span>
           <span class="gitHubLogin"
-                style="color: rgb(64, 158, 255); cursor: pointer; margin-left: 5px">GitHub登录</span>
+                style="color: rgb(64, 158, 255); cursor: pointer; margin-left: 5px"
+                @click="loginByGitHub">GitHub登录</span>
         </div>
       </div>
     </div>

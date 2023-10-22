@@ -38,7 +38,7 @@ export let getReplacer = () => {
         });
     }
     result["electron"] = () => {
-        let electronModules = ["app","BrowserWindow","ipcMain","clipboard", "ipcRenderer", "nativeImage", "shell", "webFrame"].join(",");
+        let electronModules = ["app","BrowserWindow","ipcMain","clipboard", "ipcRenderer", "nativeImage", "shell", "webFrame", "webContents"].join(",");
         return {
             find: new RegExp(`^electron$`),
             code: `const {${electronModules}} = require('electron');export {${electronModules}}`,
