@@ -1,3 +1,5 @@
+import {WsMsg} from "./type.ts";
+
 const postMsg = ({type, value}: { type: string; value?: object }) => {
     self.postMessage(JSON.stringify({type, value}))
 }
@@ -12,7 +14,8 @@ const handleMsg = (event: any) => {
 
 const handleOpen = (event) => {
     console.log('链接建立',event)
-    connection.send(JSON.stringify({name:'wanglongjun',age:18}))
+    let wsMsg: WsMsg = {sendId:'111',receiveId:'2222',content:'点点滴滴',msgType: 1}
+    connection.send(JSON.stringify(wsMsg))
 }
 
 const handleClose = (event) => {
@@ -22,8 +25,10 @@ const handleClose = (event) => {
 const handleError = (event) => {
     console.log(event)
 }
-const initConnection = (ipAndPort: string) => {
-    let wsUrl = 'ws://' + ipAndPort + '/ws'
+const initConnection = (value: string) => {
+    let ipAndPort = value.split('@')[0]
+    let userId = value.split('@')[1]
+    let wsUrl = `ws://${ipAndPort}/ws?userId=${userId}`
     connection = new WebSocket(wsUrl)
 
     // 收到消息

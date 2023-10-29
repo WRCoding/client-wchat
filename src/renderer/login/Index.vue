@@ -25,7 +25,7 @@ ipcRenderer.on('loginSuccessByGitHub', (event, url, param) => {
           let userInfo = response.data.data as UserInfoVo
           console.log(userInfo)
           userInfoStore.setUserInfo(userInfo)
-          new Ws(userInfo.ipAndPort)
+          new Ws(userInfo.ipAndPort, userInfo.id)
           clearInput()
           router.push('/Chat')
         } else {
@@ -70,7 +70,7 @@ function registerOrLogin() {
             let userInfo = response.data.data as UserInfoVo
             console.log(userInfo)
             userInfoStore.setUserInfo(userInfo)
-            new Ws(userInfo.ipAndPort)
+            new Ws(userInfo.ipAndPort,userInfo.id)
             clearInput()
             router.push('/Chat')
           } else {

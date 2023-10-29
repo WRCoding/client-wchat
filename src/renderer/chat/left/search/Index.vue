@@ -54,6 +54,7 @@ const addFriend = () => {
             <span style="padding: 10px;display: block; flex: 1">{{ searchUser.userName }}</span>
             <span v-if="userInfoStore.id !== searchUser.id && searchUser.isFriend === 0"
                   class="addBtn" @click="addFriend">+</span>
+            <span v-else-if="userInfoStore.id === searchUser.id" style="padding: 10px;display: block">本人</span>
             <span v-else style="padding: 10px;display: block">好友</span>
           </div>
         </div>
